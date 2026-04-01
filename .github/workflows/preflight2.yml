@@ -1,0 +1,27 @@
+name: preflight-guard-test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out target repo
+        uses: actions/checkout@v4
+
+      - name: Run preflight guard
+        uses: aidenplabs/preflight-guard-action@main
+        with:
+          path: .
+          output-dir: .preflight-guard
+          fail-on: no
+
+      - name: Show generated files
+        if: always()
+        run: |
+          echo "workspace: $GITHUB_WORKSPACE"
+          ls -la
+          ls -la .preflight-guard || true
+          find .preflight-guard -maxdepth 2 -type f || true
